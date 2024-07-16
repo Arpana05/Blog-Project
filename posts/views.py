@@ -32,6 +32,13 @@ def post_view(request, username=None):
 
 @login_required
 def post_create(request):
+    """sumary_line
+    
+    Keyword arguments:
+    argument -- description
+    Return: return_description
+    """
+    
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
