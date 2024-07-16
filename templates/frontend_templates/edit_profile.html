@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Blog</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'blog.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header class="border-bottom lh-1 py-3">
+            <div class="row flex-nowrap justify-content-between align-items-center">
+                <div class="col-4 text-center">
+                    <a class="blog-header-logo text-body-emphasis text-decoration-none" href="{% url 'home' %}">My Blog</a>
+                </div>
+                <div class="col-4 d-flex justify-content-end align-items-center">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'home' %}" style="margin-right: 10px;">Log out</a>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="profile-details">
+                        <h5>Edit Profile</h5>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Username</label>
+                                <input type="text" id="id_username" name="username" class="form-control" value="{{ user.username }}" required autofocus>
+                                {% if form.username.errors %}
+                                    <div class="text-danger">
+                                        {{ form.username.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                <input type="email" id="id_email" name="email" class="form-control" value="{{ user.email }}" required>
+                                {% if form.email.errors %}
+                                    <div class="text-danger">
+                                        {{ form.email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_bio" class="form-label">{{form.bio.label}}</label>
+                                <input type="text" id="id_bio" name="bio" class="form-control" value="{{ profile.bio }}">
+                                {% if form.bio.errors %}
+                                    <div class="text-danger">
+                                        {{ form.bio.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                                {{ form.profile_picture }}
+                                {% if form.profile_picture.errors %}
+                                    <div class="text-danger">
+                                        {{ form.profile_picture.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_facebook" class="form-label">Facebook</label>
+                                <input type="url" id="id_facebook" name="facebook" class="form-control" value="{{ profile.facebook }}">
+                                {% if form.facebook.errors %}
+                                <div class="text-danger">
+                                    {{ form.facebook.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_twitter" class="form-label">Twitter</label>
+                                <input type="url" id="id_twitter" name="twitter" class="form-control" value="{{ profile.twitter }}">
+                                {% if form.twitter.errors %}
+                                <div class="text-danger">
+                                    {{ form.twitter.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>        
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

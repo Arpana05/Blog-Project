@@ -1,0 +1,25 @@
+/* admin.css */
+body {
+    padding-top: 3rem;
+    font-size: 1rem;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    background-color: #fff;
+}
+
+main {
+    padding-top: 2rem;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
