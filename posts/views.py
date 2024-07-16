@@ -7,8 +7,17 @@ from users.models import User
 
 # Create your views here.
 
+
+
 @login_required
 def post_view(request, username=None):
+    """this function works as a view function for blog posts
+    
+    Keyword arguments:
+    username -- to show the users posts
+    Return: returns django template
+    """
+    
     if username:
         user = get_object_or_404(User, username=username)
         posts = Post.objects.filter(author=user)
