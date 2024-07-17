@@ -4,12 +4,11 @@ from django.contrib.auth.decorators import login_required
 from .forms import PostForm, CommentForm, LikeForm
 from django.http import HttpResponse
 from users.models import User
+from django.views import View
 
 # Create your views here.
 
 
-
-@login_required
 def post_view(request, username=None):
     """this function works as a view function for blog posts
     
@@ -25,6 +24,7 @@ def post_view(request, username=None):
         posts = Post.objects.filter(author=request.user)
     
     context = {
+        'profile': user.profile,
         'posts': posts,
     }
     return render(request, 'post_view.html', context)
@@ -58,16 +58,44 @@ def post_create(request):
     return render(request, 'post_create.html', context)
 
 
-@login_required
+# def post_detail(request, pk):
+#     post = get_object_or_404(Post, pk=pk)
+#     comments = post.comments.all()
+#     comment_form = CommentForm()
+#     categories = Category.objects.all()
+
+#     liked = post.likes.filter(user=request.user).exists()
+
+#     if request.method == 'POST':
+#         comment_form = CommentForm(request.POST)
+#         if comment_form.is_valid():
+#             comment = comment_form.save(commit=False)
+#             comment.post = post
+#             comment.user = request.user
+#             comment.save()
+#             return redirect('post_detail', pk=post.pk)
+
+#     context = {
+#         'post': post,
+#         'categories': categories,
+#         'comments': comments,
+#         'comment_form': comment_form,
+#         'liked': liked,
+#     }
+#     return render(request, 'post_detail.html', context)
+
+
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments.all()
     comment_form = CommentForm()
     categories = Category.objects.all()
 
-    liked = post.likes.filter(user=request.user).exists()
+    liked = False
+    if request.user.is_authenticated:
+        liked = post.likes.filter(user=request.user).exists()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
@@ -129,4 +157,36 @@ def delete_post(request, pk):
         return redirect('all_posts')  
     else:
         return redirect('post_detail', pk=pk)
+    
+### Without form
+# def post_create(request):
+#     if request.method == 'POST':
+#         title = request.POST.get('title')
+#         content = request.POST.get('content')
+#         post_image = request.FILES.get('image')
+
+#         post = Post(title=title, content=content, post_image=post_image, author=request.user)
+#         post.save()
+
+#         return redirect('post_detail.html', pk=post.pk)
+    
+#     else:
+#         return render(request, 'post_create.html')
+
+
+# class PostCreateView(View):
+#     def get(self, request):
+#         return render(request, 'post_create.html')
+    
+#     def post(self, request):
+#         title = request.POST.get('title')
+#         content = request.POST.get('content')
+#         post_image = request.FILES.get('image')
+
+#         post = Post(title=title, content=content, post_image=post_image, author=request.user)
+#         post.save()
+
+#         return redirect('post_detail', pk=post.pk)
+
+
 
