@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+# from posts.views import PostCreateView
 
 
 urlpatterns = [
@@ -11,5 +12,6 @@ urlpatterns = [
     path('<int:pk>/like/', views.like_post, name='like_post'),
     path('<int:pk>/edit/', views.post_edit, name='post_edit'),
     path('post/<int:pk>/delete/', views.delete_post, name='delete_post'),
+
     
 ]

@@ -1,5 +1,11 @@
 /* stylelint-disable @stylistic/selector-list-comma-newline-after */
 
+/* Example CSS to adjust text area size */
+.form-control {
+  min-height: 100px; /* Adjust height as per your design */
+  max-height: 300px; /* Optionally limit max height */
+}
+
 .blog-header-logo {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif/*rtl:Amiri, Georgia, "Times New Roman", serif*/;
   font-size: 2.25rem;

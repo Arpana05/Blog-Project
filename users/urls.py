@@ -2,6 +2,7 @@ from django.urls import path
 from users import views
 from .views import signup_view
 from posts import views as post_views
+# from posts.views import PostCreateView
 from django.contrib.auth import views as auth_views
 
 
@@ -37,6 +38,10 @@ urlpatterns = [
     path('posts/create/', post_views.post_create, name='post_create'),
 
     path('search/', views.search_view, name='search'),
+
+    # ### Add a URL pattern for handling form submission
+    # path('submit/', post_views.submit_post, name='submit_post'),   
+
 
 ]
 
