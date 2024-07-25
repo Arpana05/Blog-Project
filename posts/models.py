@@ -16,6 +16,8 @@ class Post(models.Model):
     post_image = models.ImageField(upload_to='post_pics/', blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     date_published = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
 
     def __str__(self):
         return self.title
@@ -30,6 +32,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    enabled = models.BooleanField(default=True)
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.post.title}'
@@ -43,5 +46,6 @@ class Like(models.Model):
     def __str__(self):
         return f'{self.user.username} likes {self.post.title}'
     
+
 
 

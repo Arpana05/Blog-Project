@@ -26,11 +26,11 @@
             <div class="row justify-content-center mt-5">
                 <div class="col-md-8">
                     <div class="profile-details">
-                        <h5>Edit Profile</h5>
+                        <h2><strong>Edit Profile</strong></h2>
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label for="id_username" class="form-label">Username</label>
+                                <label for="id_username" class="form-label"><strong>Username</strong></label>
                                 <input type="text" id="id_username" name="username" class="form-control" value="{{ user.username }}" required autofocus>
                                 {% if form.username.errors %}
                                     <div class="text-danger">
@@ -39,7 +39,7 @@
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="id_email" class="form-label">Email</label>
+                                <label for="id_email" class="form-label"><strong>Email</strong></label>
                                 <input type="email" id="id_email" name="email" class="form-control" value="{{ user.email }}" required>
                                 {% if form.email.errors %}
                                     <div class="text-danger">
@@ -48,7 +48,7 @@
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="id_bio" class="form-label">{{form.bio.label}}</label>
+                                <label for="id_bio" class="form-label"><strong>{{form.bio.label}}</strong></label>
                                 <input type="text" id="id_bio" name="bio" class="form-control" value="{{ profile.bio }}">
                                 {% if form.bio.errors %}
                                     <div class="text-danger">
@@ -57,8 +57,14 @@
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="id_profile_picture" class="form-label">Profile Picture</label>
-                                {{ form.profile_picture }}
+                                <label for="id_profile_picture" class="form-label"><strong>Profile Picture</strong></label>
+                                {% if profile.profile_picture %}
+                                    <img src="{{ profile.profile_picture.url }}" alt="Current Profile Picture" style="max-width: 200px; max-height: 200px; margin-bottom: 10px;">
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label for="id_profile_picture" class="form-label"><strong>Change Profile Picture</strong></label>
+                                <input type="file" id="id_profile_picture" name="profile_picture" class="form-control" accept="image/*">
                                 {% if form.profile_picture.errors %}
                                     <div class="text-danger">
                                         {{ form.profile_picture.errors }}
@@ -66,21 +72,21 @@
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="id_facebook" class="form-label">Facebook</label>
-                                <input type="url" id="id_facebook" name="facebook" class="form-control" value="{{ profile.facebook }}">
+                                <label for="id_facebook" class="form-label"><strong>Facebook (optional)</strong></label>
+                                <input type="url" id="id_facebook" name="facebook" class="form-control" value="{{ form.facebook.value|default_if_none:'' }}">
                                 {% if form.facebook.errors %}
-                                <div class="text-danger">
-                                    {{ form.facebook.errors }}
-                                </div>
+                                    <div class="text-danger">
+                                        {{ form.facebook.errors }}
+                                    </div>
                                 {% endif %}
                             </div>
                             <div class="mb-3">
-                                <label for="id_twitter" class="form-label">Twitter</label>
-                                <input type="url" id="id_twitter" name="twitter" class="form-control" value="{{ profile.twitter }}">
+                                <label for="id_twitter" class="form-label"><strong>Twitter (optional)</strong></label>
+                                <input type="url" id="id_twitter" name="twitter" class="form-control" value="{{ form.twitter.value|default_if_none:'' }}">
                                 {% if form.twitter.errors %}
-                                <div class="text-danger">
-                                    {{ form.twitter.errors }}
-                                </div>
+                                    <div class="text-danger">
+                                        {{ form.twitter.errors }}
+                                    </div>
                                 {% endif %}
                             </div>
                             </div>

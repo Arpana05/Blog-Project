@@ -1,0 +1,154 @@
+{% extends "backend_base.html" %}
+{% load static %}
+
+{% block title %}Comments{% endblock title %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card my-4">
+                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                    <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                        <h6 class="text-white text-capitalize ps-3">Comments Table</h6>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    {% comment %} <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Comment</th> {% endcomment %}
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Comment</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Commenter</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Post</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Published</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for comment in comments %}
+                                    <tr>
+                                        <td class="text-center align-middle">
+                                            {{ comment.text }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <div class="avatar-group mt-2">
+                                                <a href="{% url 'profile_view' username=comment.user.username %}" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ comment.user.username }}" data-bs-trigger="hover focus">
+                                                    <img src="{{ comment.user.profile.profile_picture.url }}" class="avatar avatar-sm me-3 rounded-circle" alt="Author Profile Picture" width="50" height="50">
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a href="{% url 'post_detail' pk=comment.post.pk %}" class="text-decoration-none text-reset">
+                                                {{ comment.post.title }}
+                                            </a>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            {% if comment.enabled %}
+                                            <form id="disableCommentForm{{ comment.id }}" action="{% url 'disable_comment' comment.id %}" method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="d-none"></button>
+                                                <a href="#" class="badge bg-gradient-secondary text-decoration-none" onclick="event.preventDefault(); confirmAction('{{ comment.id }}', 'disable');">
+                                                    Disable
+                                                </a>
+                                            </form>
+                                            {% else %}
+                                            <form id="enableCommentForm{{ comment.id }}" action="{% url 'enable_comment' comment.id %}" method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="d-none"></button>
+                                                <a href="#" class="badge bg-gradient-success text-decoration-none" onclick="event.preventDefault(); confirmAction('{{ comment.id }}', 'enable');">
+                                                    Enable
+                                                </a>
+                                            </form>
+                                            {% endif %}
+                                        </td>
+                                        
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-xs font-weight-bold">{{ comment.created_at|date:"F j, Y" }}</span>
+                                        </td>
+                                        
+                                        <td class="align-middle text-center text-sm">
+                                            <div class="d-flex justify-content-center">
+                                                <form id="deleteCommentForm{{ comment.id }}" action="{% url 'delete_comment' comment.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="d-none"></button>
+                                                    <a href="#" class="badge bg-gradient-danger text-decoration-none" onclick="confirmAction('{{ comment.id }}', 'delete');" data-toggle="tooltip" data-original-title="Delete comment">Delete</a>
+                                                </form>
+                                            </div>
+                                        </td>                                        
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include SweetAlert2 library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmAction(commentId, action) {
+        let title, text, confirmButtonText, formId;
+
+        if (action === 'delete') {
+            title = "Are you sure you want to delete?";
+            text = "You won't be able to revert this!";
+            confirmButtonText = "Yes, delete it!";
+            formId = 'deleteCommentForm';
+        } else if (action === 'disable') {
+            title = "Are you sure you want to disable?";
+            text = "This comment will no longer be visible.";
+            confirmButtonText = "Yes, disable it!";
+            formId = 'disableCommentForm';
+        } else if (action === 'enable') {
+            title = "Are you sure you want to enable?";
+            text = "This comment will become visible.";
+            confirmButtonText = "Yes, enable it!";
+            formId = 'enableCommentForm';
+        }
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: confirmButtonText
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let successTitle, successText;
+                if (action === 'delete') {
+                    successTitle = "Deleted!";
+                    successText = "The comment has been deleted successfully.";
+                } else if (action === 'disable') {
+                    successTitle = "Disabled!";
+                    successText = "The comment has been disabled successfully.";
+                } else if (action === 'enable') {
+                    successTitle = "Enabled!";
+                    successText = "The comment has been enabled successfully.";
+                }
+
+
+                Swal.fire({
+                    title: successTitle,
+                    text: successText,
+                    icon: "success",
+                    timer: 3000, // Show the success message for 3 seconds
+                    timerProgressBar: true,
+                    showConfirmButton: false // Hide the "OK" button
+                });
+                document.getElementById(formId + commentId).submit();
+            }
+        });
+    }
+</script>
+
+{% endblock body %}

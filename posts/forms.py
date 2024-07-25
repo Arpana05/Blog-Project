@@ -1,12 +1,16 @@
 from django import forms
-from .models import Post, Comment
+from .models import Post, Comment, Category
 
 class PostForm(forms.ModelForm):
-    post_image = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={'accept': 'image/*'}))
-
     class Meta:
         model = Post
-        fields = ['title','category', 'content', 'post_image']
+        fields = ['title', 'category', 'content', 'post_image']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'content': forms.Textarea(attrs={'class': 'form-control'}),
+            'post_image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
+        }
 
     # def save(self, commit=True):
     #     user = super().save(commit=False)
@@ -18,6 +22,10 @@ class PostForm(forms.ModelForm):
     #             post.save()
     #     return user
 
+class ChangeCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['category']
 
 class CommentForm(forms.ModelForm):
     class Meta:
