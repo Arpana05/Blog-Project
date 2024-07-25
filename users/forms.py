@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, CustomRole, CustomPermission
 
 
 class SignUpForm(UserCreationForm):
@@ -23,18 +23,54 @@ class SignUpForm(UserCreationForm):
                 profile.save()
         return user
 
+
 class ProfileForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+    facebook = forms.URLField(required=False)
+    twitter = forms.URLField(required=False)
+    profile_picture = forms.ImageField(widget=forms.FileInput, required=False)
+    
     class Meta:
         model = Profile
         fields = ['bio', 'profile_picture', 'facebook', 'twitter']
-        widgets = {
-            'bio': forms.Textarea(attrs={'rows': 5, 'cols': 40}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
-            'facebook': forms.URLInput(attrs={'class': 'form-control'}),
-            'twitter': forms.URLInput(attrs={'class': 'form-control'}),
-        }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['bio'].label = 'Biography'
-        self.fields['profile_picture'].label = 'Profile Picture'
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['email'].initial = self.instance.user.email
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        profile.user.email = self.cleaned_data['email']
+        if commit:
+            profile.user.save()
+            profile.save()
+        return profile
+
+
+class CustomRoleForm(forms.ModelForm):
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=CustomPermission.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = CustomRole
+        fields = ['name', 'permissions']
+
+
+class UserEditForm(forms.ModelForm):
+    role = forms.ModelChoiceField(queryset=CustomRole.objects.all(), required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'role']
+
+    def clean_role(self):
+        role = self.cleaned_data.get('role')
+        if role and not CustomRole.objects.filter(id=role.id).exists():
+            raise forms.ValidationError("Invalid role selected.")
+        return role
+    
+

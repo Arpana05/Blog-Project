@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if role.id %}Edit Role: {{ role.name }}{% else %}Create Role{% endif %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'backend.css' %}"></head>
+<body>
+    <div class="container">
+        <div class="container">
+            <header class="border-bottom lh-1 py-3">
+                <div class="row flex-nowrap justify-content-between align-items-center">
+                    <div class="col-4 text-center">
+                        <a class="blog-header-logo text-body-emphasis text-decoration-none" href="{% url 'home' %}">My Blog</a>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end align-items-center">
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}" style="margin-right: 10px;">Log out</a>
+                    </div>
+                </div>
+            </header>
+
+        <main>
+            <h2>Add Users to Role: {{ role.name }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                <label for="user_id">Select Users:</label>
+                <select name="user_id" id="user_id">
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </form>
+        </main>
+    </div>
+
+    <!-- Bootstrap and other scripts -->
+</body>
+</html>

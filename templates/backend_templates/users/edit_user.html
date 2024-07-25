@@ -1,0 +1,52 @@
+{% extends "backend_base.html" %}
+
+{% block title %}Edit User{% endblock title %}
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-xl-4 col-lg-6 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Edit User</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" class="form-control ps-2" id="id_username" name="username" value="{{ profile.user.username }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            <input type="email" class="form-control ps-2" id="id_email" name="email" value="{{ profile.user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">Bio</label>
+                            <textarea class="form-control ps-2" id="id_bio" name="bio" rows="3">{{ profile.bio }}</textarea>
+                        </div>                        
+                        <div class="mb-3">
+                            <label for="id_role" class="form-label">Role</label>
+                            <select class="form-select ps-2" id="id_role" name="role" required>
+                                <option value="" selected disabled>Select Role</option>
+                                {% for role in roles %}
+                                    <option value="{{ role.id }}" {% if profile.role.id == role.id %}selected{% endif %}>{{ role.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            <input type="file" id="id_profile_picture" name="profile_picture" class="input-group input-group-outline mb-3">
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="id_status" name="status" {% if profile.status %}checked{% endif %} style="background-color: #e91e63; border-color: #e91e63;" onchange="this.style.backgroundColor = this.checked ? '#e91e63' : '#adb5bd';">
+                            <label class="form-check-label" for="id_status">Enable User</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
